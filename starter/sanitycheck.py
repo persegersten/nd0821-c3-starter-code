@@ -16,7 +16,7 @@ def run_sanity_check(test_dir):
     print('This script will perform a sanity test to ensure your code meets the criteria in the rubric.\n')
     print('Please enter the path to the file that contains your test cases for the GET() and POST() methods')
     print('The path should be something like abc/def/test_xyz.py')
-    filepath = input('> ')
+    filepath = input('test/test_http_methods.py')
 
     assert path.exists(filepath), f"File {filepath} does not exist."
     sys.path.append(path.dirname(filepath))

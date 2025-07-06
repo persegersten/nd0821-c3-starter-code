@@ -1,0 +1,10 @@
+name: census_income_ingestion
+channels:
+  - defaults
+dependencies:
+  - python
+  - pip
+  - pip:
+    - mlflow
+    - pandas
+    - ucimlrepo

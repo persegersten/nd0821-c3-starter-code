@@ -4,10 +4,20 @@
 wsl -d Ubuntu-24.04
 
 conda create -n proj6 python scikit-learn dvc pandas numpy pytest jupyter jupyterlab fastapi uvicorn -c conda-forge
+conda activate proj6
 pip install ucimlrepo
 conda install git
+conda install -c conda-forge mlflow
 
 # Development
 wsl -d Ubuntu-24.04
 
 conda activate proj6
+
+
+TODO:
+Add mlflow:
+  - download data <-- done
+  - clean data
+  - train
+  - test
