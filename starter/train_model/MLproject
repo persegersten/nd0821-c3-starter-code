@@ -1,0 +1,8 @@
+name: census_income_training
+conda_env: environment.yml
+entry_points:
+  main:
+    parameters:
+      data_path: {type: str, default: "../data/census_income.csv"}
+    command: >-
+      python train_model.py --data_path {data_path}

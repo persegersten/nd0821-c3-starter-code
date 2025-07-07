@@ -1,0 +1,10 @@
+name: census_income_training
+channels:
+  - defaults
+dependencies:
+  - python=
+  - pip
+  - pip:
+    - mlflow
+    - pandas
+    - scikit-learn

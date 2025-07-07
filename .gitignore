@@ -1,3 +1,4 @@
 .idea/
 mlruns/
-/*.apa
+*.apa
+__pycache__
