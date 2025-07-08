@@ -1,7 +1,6 @@
 import numpy as np
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
-
 def process_data(
     X, categorical_features=[], label=None, training=True, encoder=None, lb=None
 ):
@@ -43,28 +42,42 @@ def process_data(
         Trained LabelBinarizer if training is True, otherwise returns the binarizer
         passed in.
     """
+    if categorical_features is None:
+        categorical_features = []
 
+    X_ = X.copy()
+
+    # --------- Handle the label --------------------------------------------
     if label is not None:
-        y = X[label]
-        X = X.drop([label], axis=1)
+        # Harmonise textual variants → strip '.' and whitespace
+        y_series = (
+            X_[label].astype(str)
+            .str.replace(".", "", regex=False)
+            .str.strip()
+        )
+        # Binary mapping: >50K  → 1   ,   <=50K → 0
+        y = (y_series == ">50K").astype(int).values
+        X_ = X_.drop(columns=[label])
     else:
         y = np.array([])
 
-    X_categorical = X[categorical_features].values
-    X_continuous = X.drop(*[categorical_features], axis=1)
+    # --------- Split out categorical / continuous --------------------------
+    X_cat = X_[categorical_features].values
+    X_cont = X_.drop(columns=categorical_features).values
 
-    if training is True:
+    # --------- Fit / transform encoder -------------------------------------
+    if training:
         encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
-        lb = LabelBinarizer()
-        X_categorical = encoder.fit_transform(X_categorical)
-        y = lb.fit_transform(y.values).ravel()
+        X_cat_enc = encoder.fit_transform(X_cat)
     else:
-        X_categorical = encoder.transform(X_categorical)
-        try:
-            y = lb.transform(y.values).ravel()
-        # Catch the case where y is None because we're doing inference.
-        except AttributeError:
-            pass
+        X_cat_enc = encoder.transform(X_cat)
 
-    X = np.concatenate([X_continuous, X_categorical], axis=1)
-    return X, y, encoder, lb
+    # --------- Concatenate --------------------------------------------------
+    X_final = np.concatenate([X_cont, X_cat_enc], axis=1)
+
+    # Safety check
+    assert len(y) in (0, X_final.shape[0]), (
+        f"X rows: {X_final.shape[0]}, y: {len(y)}"
+    )
+
+    return X_final, y, encoder, lb

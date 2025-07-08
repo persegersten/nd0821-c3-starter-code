@@ -4,11 +4,17 @@ import os
 import argparse
 import pandas as pd
 import mlflow
+import logging
+from export_model import export_model
 from sklearn.model_selection import train_test_split
+from mlflow.tracking import MlflowClient
 
 # Add the necessary imports for the starter code.
 from ml.data import process_data
 from ml.model import train_model, compute_model_metrics
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
+logger = logging.getLogger()
 
 
 # Add code to load in the data.
@@ -17,6 +23,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a model on census data")
     parser.add_argument("--data_path", type=str, default="starter/data/census_income.csv",
                         help="Path to the raw census data CSV file")
+    parser.add_argument("--model_path", type=str, default="model",
+                        help="Path to the folder of the trained model")
     args = parser.parse_args()
 
     # Start or attach to an MLflow run (if running via `mlflow run`)
@@ -48,16 +56,18 @@ if __name__ == "__main__":
         "native-country",
     ]
 
-    # Process the training data (one-hot encode categoricals, binarize label)
-    X_train, y_train, encoder, lb = process_data(
+    # Process the training data (one-hot encode categoricals)
+    X_train, y_train, encoder, _ = process_data(
         train, categorical_features=cat_features, label="salary", training=True
     )
     # Process the test data using the same encoder and label binarizer
     X_test, y_test, _, _ = process_data(
         test, categorical_features=cat_features, label="salary",
-        training=False, encoder=encoder, lb=lb
+        training=False, encoder=encoder
     )
 
+    print("X_train shape:", X_train.shape)
+    print("y_train shape:", y_train.shape)
     # Train and save a model.
     model = train_model(X_train, y_train)
 
@@ -67,16 +77,19 @@ if __name__ == "__main__":
     print(f"Precision: {precision:.4f} | Recall: {recall:.4f} | F1: {f1:.4f}")
 
     # Log metrics to MLflow
-    mlflow.log_metric("precision", precision)
-    mlflow.log_metric("recall", recall)
-    mlflow.log_metric("f1", f1)
+    client = MlflowClient()
+    client.log_metric(run_id, "precision", precision)
+    client.log_metric(run_id, "recall", recall)
+    client.log_metric(run_id, "f1", f1)
 
     # (Optional) Log model parameters/hyperparameters
-    mlflow.log_param("model_type", "RandomForestClassifier")
-    mlflow.log_param("n_estimators", 100)
-    mlflow.log_param("data_path", args.data_path)
+    client.log_param(run_id, "model_type", "RandomForestClassifier")
+    client.log_param(run_id, "n_estimators", 100)
+    client.log_param(run_id, "data_path", args.data_path)
 
     # Log the trained model as an MLflow model artifact
-    mlflow.sklearn.log_model(model, artifact_path="model")
+    # mlflow.sklearn.log_model(model, artifact_path="model")
+    export_model(model, X_train, args.model_path)
 
     mlflow.end_run()
+

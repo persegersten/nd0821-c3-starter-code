@@ -4,6 +4,6 @@ entry_points:
   main:
     parameters:
       dataset_id: {type: int, default: 20}
-      target_dir: {type: str, default: "../data"}
+      target_dir: {type: str, default: "../../data"}
     command: >-
       python download_data.py --dataset_id {dataset_id} --target_dir {target_dir}
