@@ -2,7 +2,7 @@ name: census_income_ingestion
 channels:
   - defaults
 dependencies:
-  - python
+  - python=3.13.5
   - pip
   - pip:
     - mlflow

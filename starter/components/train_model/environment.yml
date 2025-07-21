@@ -2,8 +2,9 @@ name: census_income_training
 channels:
   - defaults
 dependencies:
-  - python=
+  - python=3.13.5
   - pip
+  - pytest
   - pip:
     - mlflow
     - pandas
