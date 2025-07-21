@@ -41,7 +41,7 @@ def test_compute_model_metrics_edge_and_happy_cases(y, preds, expected):
     assert fbeta == exp_fbet
 
 
-def test_inference_uses_model_predict(monkeypatch):
+def test_inference_uses_model_predict():
     """
     The inference function should call model.predict exactly once
     and return a NumPy array of predictions.
