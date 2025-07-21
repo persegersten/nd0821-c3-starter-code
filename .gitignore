@@ -1,4 +1,5 @@
 .idea/
 mlruns/
+model/
 *.apa
 __pycache__
