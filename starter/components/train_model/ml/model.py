@@ -1,6 +1,8 @@
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
+import pandas as pd
+from typing import List, Dict, Any
 
 # Optional: implement hyperparameter tuning.
 def train_model(X_train, y_train):
@@ -66,3 +68,44 @@ def inference(model, X):
     """
     preds = model.predict(X)
     return preds
+
+def evaluate_slices(
+    model,
+    X: pd.DataFrame,
+    y: np.ndarray,
+    categorical_features: List[str]
+) -> pd.DataFrame:
+    """
+    Evaluate model performance on slices of the data defined by each
+    unique value of each categorical feature.
+
+    Returns a DataFrame with columns:
+      - feature: the categorical feature name
+      - value: one of its unique categories
+      - precision, recall, fbeta: metrics on that slice
+      - n: number of samples in the slice
+    """
+    records: List[Dict[str, Any]] = []
+    for feature in categorical_features:
+        print(f"2 - Evaluating slice on feature: {feature}")
+        for val in X[feature].dropna().unique():
+            mask = X[feature] == val
+            X_slice = X.loc[mask]
+            y_slice = y[mask]
+            if len(y_slice) == 0:
+                continue
+
+            # turn DataFrame slice into model input (e.g., numpy array)
+            preds = inference(model, X_slice.to_numpy())
+            precision, recall, fbeta = compute_model_metrics(y_slice, preds)
+
+            records.append({
+                "feature": feature,
+                "value": val,
+                "precision": precision,
+                "recall": recall,
+                "fbeta": fbeta,
+                "n": len(y_slice)
+            })
+
+    return pd.DataFrame.from_records(records)

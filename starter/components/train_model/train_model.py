@@ -8,6 +8,7 @@ import logging
 from export_model import export_model
 from sklearn.model_selection import train_test_split
 from mlflow.tracking import MlflowClient
+from ml.model import evaluate_slices
 
 # Add the necessary imports for the starter code.
 from ml.data import process_data
@@ -90,6 +91,14 @@ if __name__ == "__main__":
     # Log the trained model as an MLflow model artifact
     # mlflow.sklearn.log_model(model, artifact_path="model")
     export_model(model, X_train, args.model_path)
+
+    for category in cat_features:
+        ohe_feature_names = encoder.get_feature_names_out(cat_features)
+        print(f"Number of column names for {category} from ohe_feature_names: {ohe_feature_names}")
+
+        #X_test_df = pd.DataFrame(X_test, columns=ohe_feature_names)
+        slice_df = evaluate_slices(model, X_test, y_test, ohe_feature_names)
+        print(slice_df)
 
     mlflow.end_run()
 
