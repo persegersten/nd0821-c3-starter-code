@@ -87,7 +87,6 @@ def evaluate_slices(
     """
     records: List[Dict[str, Any]] = []
     for feature in categorical_features:
-        print(f"2 - Evaluating slice on feature: {feature}")
         for val in X[feature].dropna().unique():
             mask = X[feature] == val
             X_slice = X.loc[mask]
@@ -96,7 +95,7 @@ def evaluate_slices(
                 continue
 
             # turn DataFrame slice into model input (e.g., numpy array)
-            preds = inference(model, X_slice.to_numpy())
+            preds = inference(model, X_slice)
             precision, recall, fbeta = compute_model_metrics(y_slice, preds)
 
             records.append({

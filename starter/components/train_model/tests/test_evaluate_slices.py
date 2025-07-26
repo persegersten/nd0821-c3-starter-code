@@ -56,10 +56,10 @@ def test_evaluate_slices_with_perfect_model():
     y = np.array([0, 1, 0, 1])
 
     class PerfectModel:
-        def predict(self, X_arr):
-            # X_arr is a (n_rows, 1) array of 'x' or 'y'.
-            # Return 0 whenever the feature=='x', 1 whenever feature=='y'.
-            cats = X_arr.flatten()
+        def predict(self, X_df):
+            # X_df is a DataFrame with one column, say "cat", containing 'x' or 'y'
+            # Extract that column as a Series (1‑D)
+            cats = X_df.iloc[:, 0]  # or X_df['cat'] if you know the name
             return np.array([0 if c == 'x' else 1 for c in cats])
 
     # No need to patch – inference() will call model.predict()

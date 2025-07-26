@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
 def process_data(
@@ -31,7 +32,7 @@ def process_data(
 
     Returns
     -------
-    X : np.array
+    X : : pd.DataFrame
         Processed data.
     y : np.array
         Processed labels if labeled=True, otherwise empty np.array.
@@ -64,6 +65,7 @@ def process_data(
     # --------- Split out categorical / continuous --------------------------
     X_cat = X_[categorical_features].values
     X_cont = X_.drop(columns=categorical_features).values
+    cont_features = [c for c in X_.columns if c not in categorical_features]
 
     # --------- Fit / transform encoder -------------------------------------
     if training:
@@ -75,9 +77,15 @@ def process_data(
     # --------- Concatenate --------------------------------------------------
     X_final = np.concatenate([X_cont, X_cat_enc], axis=1)
 
+    # --------- Build datafram -----------------------------------------------
+    # Build DataFrame with proper column names
+    ohe_names = list(encoder.get_feature_names_out(categorical_features))
+    all_cols = cont_features + ohe_names
+    X_df = pd.DataFrame(X_final, columns=all_cols)
+
     # Safety check
     assert len(y) in (0, X_final.shape[0]), (
         f"X rows: {X_final.shape[0]}, y: {len(y)}"
     )
 
-    return X_final, y, encoder, lb
+    return X_df, y, encoder, lb

@@ -67,15 +67,15 @@ if __name__ == "__main__":
         training=False, encoder=encoder
     )
 
-    print("X_train shape:", X_train.shape)
-    print("y_train shape:", y_train.shape)
+    logger.info(f"X_train shape: {X_train.shape}")
+    logger.info(f"y_train shape: {y_train.shape}")
     # Train and save a model.
     model = train_model(X_train, y_train)
 
     # Evaluate the model on the test data
     preds = model.predict(X_test)
     precision, recall, f1 = compute_model_metrics(y_test, preds)
-    print(f"Precision: {precision:.4f} | Recall: {recall:.4f} | F1: {f1:.4f}")
+    logger.info(f"Precision: {precision:.4f} | Recall: {recall:.4f} | F1: {f1:.4f}")
 
     # Log metrics to MLflow
     client = MlflowClient()
@@ -93,12 +93,13 @@ if __name__ == "__main__":
     export_model(model, X_train, args.model_path)
 
     for category in cat_features:
-        ohe_feature_names = encoder.get_feature_names_out(cat_features)
-        print(f"Number of column names for {category} from ohe_feature_names: {ohe_feature_names}")
+        # 2) find all dummy columns that start with "category_"
+        encoded_cols = [c for c in X_test.columns if c.startswith(f"{category}_")]
+        logger.info(f"Analyse feature slices on categorical feature: {category}")
 
         #X_test_df = pd.DataFrame(X_test, columns=ohe_feature_names)
-        slice_df = evaluate_slices(model, X_test, y_test, ohe_feature_names)
-        print(slice_df)
+        slice_df = evaluate_slices(model, X_test, y_test, encoded_cols)
+        logger.info(slice_df)
 
     mlflow.end_run()
 
