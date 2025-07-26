@@ -23,11 +23,19 @@ UDACITY excersice. Model intention is to predict income from selected attributes
 ## Metrics
 - **Precision:** 0.73  
 - **Recall:** 0.61  
-- **F1‑score:** 0.66  
+- **F1‑score:** 0.66
 
 ## Ethical Considerations
-- **Bias risk:** Under‑represented demographic groups may be misclassified.  
+- **Bias risk:** Under‑represented demographic groups may be misclassified.
 - **Sensitive features:** `race`, `sex`, `native-country` :contentReference[oaicite:6]{index=6}
+
+
+Overall, the model achieves a Precision of 0.73, Recall of 0.61 and F1‑score of 0.66, but slice analysis shows significant variation: for example, recall for race_Amer-Indian-Eskimo drops to 0.375 while it exceeds 0.85 for education_Doctorate.
+
+Mid‑level education groups (e.g. HS‑grad) show F1 below 0.50, whereas advanced degrees score above 0.80, indicating strong proxy bias via education.
+
+Gender slices reveal higher precision for males (0.76) but lower recall (0.53) compared to females (0.62), suggesting unequal error rates across sex.
+
 
 ## Caveats and Recommendations
 - **Generalization:** Performance may degrade on data distributions different from training.  
