@@ -1,0 +1,9 @@
+name: census_income_training
+conda_env: environment.yml
+entry_points:
+  test:
+    command: >-
+      pytest --maxfail=1 --disable-warnings -q
+  main:
+    command: >-
+      pytest  --maxfail=1 --disable-warnings -q

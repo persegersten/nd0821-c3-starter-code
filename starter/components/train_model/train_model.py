@@ -90,7 +90,8 @@ if __name__ == "__main__":
 
     # Log the trained model as an MLflow model artifact
     # mlflow.sklearn.log_model(model, artifact_path="model")
-    export_model(model, X_train, args.model_path)
+    # export_model2(model, X_train, args.model_path)
+    export_model(model, encoder, args.model_path)
 
     for category in cat_features:
         # 2) find all dummy columns that start with "category_"

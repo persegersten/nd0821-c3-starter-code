@@ -2,6 +2,7 @@ import mlflow
 import logging
 import shutil
 import os
+import joblib
 from mlflow.models import infer_signature
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
@@ -21,7 +22,26 @@ def export_model_log(pipe, X_val):
         registered_model_name="census_income_rf"  # valfritt
     )
 
-def export_model(pipe, X_val, model_dir_name):
+def export_model(
+    model,
+    encoder,
+    model_path: str
+) -> None:
+    # Ensure the directory exists
+    os.makedirs(model_path, exist_ok=True)
+
+    # 1) Save the model
+    model_file = os.path.join(model_path, "random_forest_model.joblib")
+    joblib.dump(model, model_file)
+
+    # 2) Save the OneHotEncoder
+    encoder_file = os.path.join(model_path, "onehot_encoder.joblib")
+    joblib.dump(encoder, encoder_file)
+
+    logger.info(f"Model saved to           {model_file}")
+    logger.info(f"OneHotEncoder saved to   {encoder_file}")
+
+def export_model2(pipe, X_val, model_dir_name):
     logger.info("Infer the signature of the model")
     val_pred = pipe.predict(X_val).reshape(-1, 1)  # <- gör kolumn-shape
     signature = infer_signature(X_val, val_pred)

@@ -1,0 +1,11 @@
+name: census_income_training
+channels:
+  - defaults
+dependencies:
+  - python=3.13.5
+  - pip
+  - pytest
+  - pip:
+    - mlflow
+    - pandas
+    - fastapi==0.63.0
