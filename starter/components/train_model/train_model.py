@@ -26,6 +26,8 @@ if __name__ == "__main__":
                         help="Path to the raw census data CSV file")
     parser.add_argument("--model_path", type=str, default="model",
                         help="Path to the folder of the trained model")
+    parser.add_argument("--sliced_output_path", type=str, default="model",
+                        help="Path to the output of the feature sliced report")
     args = parser.parse_args()
 
     # Start or attach to an MLflow run (if running via `mlflow run`)
@@ -93,14 +95,19 @@ if __name__ == "__main__":
     # export_model2(model, X_train, args.model_path)
     export_model(model, encoder, args.model_path)
 
-    for category in cat_features:
-        # 2) find all dummy columns that start with "category_"
-        encoded_cols = [c for c in X_test.columns if c.startswith(f"{category}_")]
-        logger.info(f"Analyse feature slices on categorical feature: {category}")
+    with open(args.sliced_output_path, "w") as f:
+        for category in cat_features:
+            # 2) find all dummy columns that start with "category_"
+            encoded_cols = [c for c in X_test.columns if c.startswith(f"{category}_")]
+            logger.info(f"Analyse feature slices on categorical feature: {category}")
+            f.write(f"\n=== Feature slice: {category} ===\n")
 
-        #X_test_df = pd.DataFrame(X_test, columns=ohe_feature_names)
-        slice_df = evaluate_slices(model, X_test, y_test, encoded_cols)
-        logger.info(slice_df)
+            #X_test_df = pd.DataFrame(X_test, columns=ohe_feature_names)
+            slice_df = evaluate_slices(model, X_test, y_test, encoded_cols)
+            f.write(slice_df.to_string(index=False))
+            f.write("\n")
+
+    logger.info(f"Report of categorical feature saved to: {args.sliced_output_path}")
 
     mlflow.end_run()
 

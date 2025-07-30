@@ -3,3 +3,4 @@ mlruns/
 model/
 *.apa
 __pycache__
+slice_output.txt

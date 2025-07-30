@@ -8,5 +8,7 @@ entry_points:
     parameters:
       data_path: {type: str, default: "../../data/census_income.csv"}
       model_path: {type: str, default: "../../model"}
+      sliced_output_path: {type: str, default: "../../slice_output.txt"}
     command: >-
-      pytest & python train_model.py --data_path {data_path} --model_path {model_path}
+      pytest --maxfail=1 --disable-warnings -q && \
+        python train_model.py --data_path {data_path} --model_path {model_path} --sliced_output_path {sliced_output_path}
