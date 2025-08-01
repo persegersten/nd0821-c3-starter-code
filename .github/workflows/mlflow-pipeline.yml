@@ -1,0 +1,52 @@
+name: Build-model-with-MLflow
+
+on:
+  push:
+    branches: [ master, main ]      # adapt if you use another default branch
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-and-train:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -l {0}          # run in a login shell so conda activate works
+        working-directory: starter   # <-- MLflow project is here
+
+    steps:
+    # 1. Checkout repository
+    - uses: actions/checkout@v4
+
+    # 2. Cache Conda pkgs to speed up subsequent builds (optional but nice)
+    - name: Cache conda
+      uses: actions/cache@v4
+      with:
+        path: ~/.conda/pkgs
+        key: conda-pkgs-${{ runner.os }}-${{ hashFiles('starter/conda.yml') }}
+
+    # 3. Install Miniconda & create env from starter/conda.yml
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        environment-file: starter/conda.yml
+        activate-environment: mlflow-env
+        auto-activate-base: false
+        use-only-tar-bz2: true      # faster installs, works with the cache
+
+    # 4. Run the exact pipeline you run locally
+    - name: Run MLflow project
+      run: |
+        mlflow --version
+        mlflow run .                 # the “.” is starter/, thanks to working-directory
+
+    # 5. Upload the trained model & encoder so you can download them from the job
+    - name: Upload artifacts
+      if: success() && exists('model')
+      uses: actions/upload-artifact@v4
+      with:
+        name: trained-model
+        path: |
+          model/random_forest_model.joblib
+          model/onehot_encoder.joblib

@@ -4,10 +4,35 @@ import pandas as pd
 import joblib
 from typing import Any, Dict
 import numpy as np
+import os
+from pathlib import Path
 
-# Load trained objects (adjust paths as needed)
-model = joblib.load("./model/random_forest_model.joblib")
-encoder = joblib.load("./model/onehot_encoder.joblib")
+CATEGORICAL_COLS = [
+    "workclass",
+    "education",
+    "marital-status",
+    "occupation",
+    "relationship",
+    "race",
+    "sex",
+    "native-country",
+]
+
+NUMERIC_COLS = [
+    "age",
+    "fnlwgt",
+    "education-num",
+    "capital-gain",
+    "capital-loss",
+    "hours-per-week",
+]
+
+# Load trained objects
+# Folder that holds the artefacts.
+# Set MODEL_DIR=/some/absolute/or/relative/dir in your environment to override
+MODEL_DIR = Path(os.getenv("MODEL_DIR", "./model"))
+model   = joblib.load(MODEL_DIR / "random_forest_model.joblib")
+encoder = joblib.load(MODEL_DIR / "onehot_encoder.joblib")
 # lb = joblib.load("../model/label_binarizer.joblib")
 
 # Start app
@@ -52,23 +77,25 @@ def read_root() -> Dict[str, Any]:
     return {"message": "Welcome to the Income Prediction API"}
 
 @app.post("/predict")
-def predict_income(payload: InferenceRequest) -> Dict[str, Any]:
-    # Convert request to DataFrame with original column names
-    data = payload.dict(by_alias=True)
-    df = pd.DataFrame([data])
+def predict_income(payload: dict):
+    # --- DataFrame built from request -----------------------------------
+    df = pd.DataFrame([payload])
 
-    # One-hot encode categorical features
-    cat_feats = [f for f in df.columns if '-' in f]
-    X_cat = encoder.transform(df[cat_feats])
+    # --- split features exactly as during training ----------------------
+    X_num = df[NUMERIC_COLS].reset_index(drop=True)
 
-    # Numeric features
-    num_feats = [c for c in df.columns if c not in cat_feats]
-    X_num = df[num_feats].to_numpy()
+    # One-hot encode and build a DataFrame with column names
+    X_cat_arr = encoder.transform(df[CATEGORICAL_COLS])
+    X_cat = pd.DataFrame(
+        X_cat_arr,
+        columns=encoder.get_feature_names_out(CATEGORICAL_COLS),
+        index=X_num.index,
+    )
 
-    # Combine and predict
-    X_final = np.concatenate([X_num, X_cat], axis=1)
+    # --- concatenate into a single DataFrame ----------------------------
+    X_final = pd.concat([X_num, X_cat], axis=1)
+
+    # --- model prediction -----------------------------------------------
     pred = model.predict(X_final)
-    #label = lb.inverse_transform(pred)[0]
 
-    # return {"prediction": label}
-    return {"prediction": pred}
+    return {"prediction": pred.tolist()}
