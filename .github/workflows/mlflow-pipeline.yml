@@ -46,10 +46,9 @@ jobs:
 
     # 5. Upload the trained model & encoder so you can download them from the job
     - name: Upload artifacts
-      if: ${{ success() && hashFiles('model/random_forest_model.joblib') != '' }}
+      if: ${{ success() && hashFiles('starter/model/random_forest_model.joblib') != '' }}
       uses: actions/upload-artifact@v4
       with:
-        name: trained-model
-        path: |
-          model/random_forest_model.joblib
-          model/onehot_encoder.joblib
+        name: model
+        path: starter/model/*.joblib
+        if-no-files-found: error
