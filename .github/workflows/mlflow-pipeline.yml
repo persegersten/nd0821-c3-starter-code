@@ -41,6 +41,9 @@ jobs:
         mlflow --version
         mlflow run .                 # the “.” is starter/, thanks to working-directory
 
+    - name: Debug – lista modeller
+      run: ls -R starter/model
+
     # 5. Upload the trained model & encoder so you can download them from the job
     - name: Upload artifacts
       if: ${{ success() && hashFiles('starter/model/random_forest_model.joblib') != '' }}
