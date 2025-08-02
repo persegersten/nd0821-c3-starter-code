@@ -82,10 +82,10 @@ def test_read_root():
 def test_predict_low_income():
     r = _post("/predict", LOW_PAYLOAD)
     assert r.status_code == 200
-    assert r.json() == {"prediction": [0]}
+    assert r.json() == {"prediction": ["<=50K"]}
 
 
 def test_predict_high_income():
     r = _post("/predict", HIGH_PAYLOAD)
     assert r.status_code == 200
-    assert r.json() == {"prediction": [1]}
+    assert r.json() == {"prediction": [">50K"]}

@@ -76,6 +76,8 @@ class InferenceRequest(BaseModel):
 def read_root() -> Dict[str, Any]:
     return {"message": "Welcome to the Income Prediction API"}
 
+LABEL_MAP = {0: "<=50K", 1: ">50K"}
+
 @app.post("/predict")
 def predict_income(payload: dict):
     # --- DataFrame built from request -----------------------------------
@@ -98,4 +100,8 @@ def predict_income(payload: dict):
     # --- model prediction -----------------------------------------------
     pred = model.predict(X_final)
 
-    return {"prediction": pred.tolist()}
+    pred_labels = [LABEL_MAP[int(y)] for y in pred]
+
+    return {"prediction": pred_labels}
+
+    return {"prediction": pred_labels}

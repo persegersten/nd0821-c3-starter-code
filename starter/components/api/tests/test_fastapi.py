@@ -75,7 +75,7 @@ def test_predict_low_income(monkeypatch):
 
     r = client.post("/predict", json=VALID_PAYLOAD)
     assert r.status_code == 200
-    assert r.json() == {"prediction": [0]}
+    assert r.json() == {"prediction": ["<=50K"]}
 
 def test_predict_high_income(monkeypatch):
     monkeypatch.setattr(app_module, "encoder", DummyEncoder(), raising=False)
@@ -83,4 +83,4 @@ def test_predict_high_income(monkeypatch):
 
     r = client.post("/predict", json=VALID_PAYLOAD)
     assert r.status_code == 200
-    assert r.json() == {"prediction": [1]}
+    assert r.json() == {"prediction": [">50K"]}
