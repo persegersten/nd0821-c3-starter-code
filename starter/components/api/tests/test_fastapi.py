@@ -2,8 +2,8 @@
 """
 Three tests:
   • GET /
-  • POST /predict  =>  0 (≤50 K)
-  • POST /predict  =>  1 (>50 K)
+  • POST /predict  =>  0 (≤50K)
+  • POST /predict  =>  1 (>50K)
 We patch the module’s `encoder` and `model`, not the FastAPI instance.
 """
 from pathlib import Path
