@@ -28,21 +28,28 @@ client = TestClient(app_module.app)
 class DummyEncoder:
     """Returns the right shape but no content – good enough for tests."""
     def transform(self, df):
-        return np.zeros((len(df), 2))
+        return np.zeros((len(df), 8))
+
+    def get_feature_names_out(self, input_features=None):
+        # mimic sklearn’s API
+        if input_features is None:
+            input_features = range(self._n_out)
+        return [f"{col}_dummy" for col in input_features]
 
 class DummyModel:
     def __init__(self, out):
-        self._out = out  # e.g. [0] or [1]
+        self._out = np.asarray(out)
 
     def predict(self, X):
-        # Ensure JSON‑friendly result (list of int)
-        return list(self._out)
+        return self._out
+
 
 
 # ---- Common, valid payload ------------------------------------------------
 VALID_PAYLOAD = {
     "age": 38,
     "fnlwgt": 284_582.0,
+    "education-num": 9,
     "education": "HS-grad",
     "marital-status": "Divorced",
     "occupation": "Exec-managerial",
@@ -53,6 +60,7 @@ VALID_PAYLOAD = {
     "capital-loss": 0.0,
     "hours-per-week": 40.0,
     "native-country": "United-States",
+    "workclass": "Private",
 }
 
 # ---- The actual tests -----------------------------------------------------
