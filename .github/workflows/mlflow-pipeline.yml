@@ -62,22 +62,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Fetch the model
       - uses: actions/download-artifact@v4
         with:
           name: model
           path: starter/model
 
-      # ‹---  Install Heroku-CLI & log in   –––›
       - name: Set up Heroku
-        uses: heroku/actions/setup-heroku@v1
+        uses: heroku/setup-heroku@v2
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          heroku_app_name: udacity-c3-model
 
-      # Create and deploy
-      - name: Create (if needed) + deploy
+      - name: Deploy to Heroku
         run: |
-          heroku apps:info -a udacity-c3-model || heroku create udacity-c3-model
-          git push https://heroku:${HEROKU_API_KEY}@git.heroku.com/udacity-c3-model.git HEAD:main
+          git remote add heroku https://git.heroku.com/udacity-c3-model.git
+          git push heroku HEAD:main
