@@ -70,7 +70,7 @@ jobs:
 
       # ‹---  Install Heroku-CLI & log in   –––›
       - name: Set up Heroku
-        uses: heroku/actions/setup-heroku@v2
+        uses: heroku/actions/setup-heroku@v1
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
