@@ -64,11 +64,11 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: model
+          name: mode
           path: starter/model
 
-      - name: Set up Heroku
-        uses: heroku/setup-heroku@v2
+      - name: Set up Heroku CLI
+        uses: heroku/actions/setup-heroku@v1
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
