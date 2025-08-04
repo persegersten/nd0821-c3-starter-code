@@ -50,5 +50,28 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: model
-        path: starter/model/*.joblib
+        path: |
+          starter/model/random_forest_model.joblib
+          starter/model/onehot_encoder.joblib
         if-no-files-found: error
+
+  # 6 Deploy on Heruko
+  deploy-heroku:
+    needs: build-train
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Download the modell to the path expcetd by the app
+      - uses: actions/download-artifact@v4
+        with:
+          name: model
+          path: starter/model
+
+      - uses: akhileshns/heroku-deploy@v4
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: udacity-c3-model
+          heroku_email: persegersten@gmail.com
+          usedocker: false       # FastAPI using Herokus Python buildpack
+          appdir: starter        # slug is build from this directory
