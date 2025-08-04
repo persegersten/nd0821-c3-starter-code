@@ -57,7 +57,7 @@ jobs:
 
   # 6 Deploy on Heruko
   deploy-heroku:
-    needs: build-train
+    needs: build-and-train
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
