@@ -2,7 +2,7 @@ name: census_income_training
 channels:
   - defaults
 dependencies:
-  - python=3.13.5
+  - python=3.13
   - pip
   - pytest
   - pip:
