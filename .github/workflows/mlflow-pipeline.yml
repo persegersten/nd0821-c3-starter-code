@@ -66,6 +66,15 @@ jobs:
           name: model
           path: model
 
+      # Add a debug step to verify the files
+      - name: Debug - Check downloaded files
+        run: |
+          echo "Contents of model directory:"
+          ls -la model/
+          
+          echo "Contents of . directory:"
+          ls -la ./
+
       # Install Heroku CLI
       - name: Install Heroku CLI
         run: |
