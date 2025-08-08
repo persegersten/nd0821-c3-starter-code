@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd starter
-
 export MODEL_DIR="model"
 
 uvicorn components.api.app:app \

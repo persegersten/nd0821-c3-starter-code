@@ -13,7 +13,6 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}          # run in a login shell so conda activate works
-        working-directory: starter   # <-- MLflow project is here
 
     steps:
     # 1. Checkout repository
@@ -24,13 +23,13 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.conda/pkgs
-        key: conda-pkgs-${{ runner.os }}-${{ hashFiles('starter/conda.yml') }}
+        key: conda-pkgs-${{ runner.os }}-${{ hashFiles('conda.yml') }}
 
-    # 3. Install Miniconda & create env from starter/conda.yml
+    # 3. Install Miniconda & create env from conda.yml
     - name: Set up Miniconda
       uses: conda-incubator/setup-miniconda@v3
       with:
-        environment-file: starter/conda.yml
+        environment-file: conda.yml
         activate-environment: mlflow-env
         auto-activate-base: false
         use-only-tar-bz2: true      # faster installs, works with the cache
@@ -39,20 +38,20 @@ jobs:
     - name: Run MLflow project
       run: |
         mlflow --version
-        mlflow run .                 # the "." is starter/, thanks to working-directory
+        mlflow run .                
 
     - name: Debug – lista modeller
       run: ls -R model
 
     # 5. Upload the trained model & encoder so you can download them from the job
     - name: Upload artifacts
-      if: ${{ success() && hashFiles('starter/model/random_forest_model.joblib') != '' }}
+      if: ${{ success() && hashFiles('random_forest_model.joblib') != '' }}
       uses: actions/upload-artifact@v4
       with:
         name: model
         path: |
-          starter/model/random_forest_model.joblib
-          starter/model/onehot_encoder.joblib
+          model/random_forest_model.joblib
+          model/onehot_encoder.joblib
         if-no-files-found: error
 
   # 6 Deploy on Heroku
@@ -65,7 +64,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: model
-          path: starter/model
+          path: model
 
       # Install Heroku CLI
       - name: Install Heroku CLI
@@ -78,4 +77,4 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "udacity-c3-model"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: "starter"  # Specify the directory containing your app
+          appdir: ""  # Specify the directory containing your app
