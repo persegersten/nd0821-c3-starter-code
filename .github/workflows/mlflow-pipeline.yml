@@ -39,7 +39,7 @@ jobs:
     - name: Run MLflow project
       run: |
         mlflow --version
-        mlflow run .                 # the “.” is starter/, thanks to working-directory
+        mlflow run .                 # the "." is starter/, thanks to working-directory
 
     - name: Debug – lista modeller
       run: ls -R model
@@ -55,7 +55,7 @@ jobs:
           starter/model/onehot_encoder.joblib
         if-no-files-found: error
 
-  # 6 Deploy on Heruko
+  # 6 Deploy on Heroku
   deploy-heroku:
     needs: build-and-train
     runs-on: ubuntu-latest
@@ -64,16 +64,12 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: mode
+          name: model
           path: starter/model
 
-      - name: Set up Heroku CLI
-        uses: heroku/actions/setup-heroku@v1
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "udacity-c3-model"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-
-      - name: Deploy to Heroku
-        run: |
-          git remote add heroku https://git.heroku.com/udacity-c3-model.git
-          git push heroku HEAD:main
