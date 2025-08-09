@@ -45,13 +45,13 @@ jobs:
 
     # 5. Upload the trained model & encoder so you can download them from the job
     - name: Upload artifacts
-      if: ${{ success() && hashFiles('random_forest_model.joblib') != '' }}
+      if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
         name: model
         path: |
-          model/random_forest_model.joblib
-          model/onehot_encoder.joblib
+          **/random_forest_model.joblib
+          **/onehot_encoder.joblib
         if-no-files-found: error
 
   # 6 Deploy on Heroku
