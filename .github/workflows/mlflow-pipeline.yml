@@ -59,21 +59,10 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-        run: |
-          # Skapa .netrc med både api.heroku.com och git.heroku.com
-          cat > ~/.netrc << EOF
-          machine api.heroku.com
-              login $HEROKU_EMAIL
-              password $HEROKU_API_KEY
-          machine git.heroku.com
-              login $HEROKU_EMAIL
-              password $HEROKU_API_KEY
-          EOF
-          chmod 600 ~/.netrc
-            
+        run: |            
           # Setup Git remote
           git remote remove heroku || true
-          git remote add heroku https://git.heroku.com/udacity-c3-model.git
+          git remote add heroku https://heroku:${HEROKU_API_KEY}@git.heroku.com/udacity-c3-model.git
             
           # Verify remote and push
           git remote -v
