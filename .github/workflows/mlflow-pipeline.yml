@@ -61,4 +61,4 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "udacity-c3-model"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          buildpack: "heroku/python"
+          heroku_git_url: "https://git.heroku.com/udacity-c3-model.git"
