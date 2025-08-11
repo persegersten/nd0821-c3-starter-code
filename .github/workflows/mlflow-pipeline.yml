@@ -52,9 +52,7 @@ jobs:
 
       - name: Install Heroku CLI
         run: |
-          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-          echo "Verifying Heroku CLI installation..."
-          heroku --version
+          curl https://cli-assets.heroku.com/install.sh | sh
 
       - name: Set up Git for Heroku
         run: |
@@ -62,8 +60,9 @@ jobs:
           git config --global user.name "GitHub Actions"
 
       - name: Deploy to Heroku
-        run: |
-          echo "Setting up Heroku remote..."
-          heroku git:remote -a udacity-c3-model || exit 1
-          echo "Pushing to Heroku..."
-          git push heroku HEAD:main --force || exit 1
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "udacity-c3-model"
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          appdir: ""  # Specify the directory containing your app
