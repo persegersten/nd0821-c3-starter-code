@@ -2,13 +2,12 @@ name: Build-model-with-MLflow
 
 on:
   push:
-    branches: [ master, main ]      # adapt if you use another default branch
+    branches: [ master, main ]
   pull_request:
     branches: [ master, main ]
 
 jobs:
   build-and-train:
-    # Your build-and-train job stays exactly the same
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -49,40 +48,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Important for Heroku deployment
+          fetch-depth: 0
 
-      - name: Download model artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: model
-          path: model
-
-      - name: Debug - Check downloaded files
+      - name: Install Heroku CLI
         run: |
-          echo "Contents of model directory:"
-          ls -la model/          
+          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+          echo "Verifying Heroku CLI installation..."
+          heroku --version
 
       - name: Set up Git for Heroku
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git config --global init.defaultBranch main
-
-      # Add and commit the model files
-      - name: Add model files to git
-        run: |
-          git add .
-          git commit -m "Add model files for deployment" || echo "No changes to commit"
-
-      - name: Login to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "udacity-c3-model"
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          justlogin: true
 
       - name: Deploy to Heroku
         run: |
-          heroku git:remote -a udacity-c3-model
-          git push heroku HEAD:main --force
+          echo "Setting up Heroku remote..."
+          heroku git:remote -a udacity-c3-model || exit 1
+          echo "Pushing to Heroku..."
+          git push heroku HEAD:main --force || exit 1
