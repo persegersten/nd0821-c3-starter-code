@@ -50,9 +50,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+          heroku --version
+
       - name: Deploy to Heroku
-        uses: justinharringa/heroku-deploy@v3.0.2
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "udacity-c3-model"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          buildpack: "heroku/python"
