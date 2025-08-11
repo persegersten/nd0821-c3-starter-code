@@ -13,34 +13,34 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
-    - uses: actions/checkout@v4
-    - name: Cache conda
-      uses: actions/cache@v4
-      with:
-        path: ~/.conda/pkgs
-        key: conda-pkgs-${{ runner.os }}-${{ hashFiles('conda.yml') }}
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        environment-file: conda.yml
-        activate-environment: mlflow-env
-        auto-activate-base: false
-        use-only-tar-bz2: true
-    - name: Run MLflow project
-      run: |
-        mlflow --version
-        mlflow run .
-    - name: Debug – lista modeller
-      run: ls -R model
-    - name: Upload artifacts
-      if: ${{ success() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: model
-        path: |
-          **/random_forest_model.joblib
-          **/onehot_encoder.joblib
-        if-no-files-found: error
+      - uses: actions/checkout@v4
+      - name: Cache conda
+        uses: actions/cache@v4
+        with:
+          path: ~/.conda/pkgs
+          key: conda-pkgs-${{ runner.os }}-${{ hashFiles('conda.yml') }}
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: conda.yml
+          activate-environment: mlflow-env
+          auto-activate-base: false
+          use-only-tar-bz2: true
+      - name: Run MLflow project
+        run: |
+          mlflow --version
+          mlflow run .
+      - name: Debug – lista modeller
+        run: ls -R model
+      - name: Upload artifacts
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: |
+            **/random_forest_model.joblib
+            **/onehot_encoder.joblib
+          if-no-files-found: error
 
   deploy-heroku:
     needs: build-and-train
@@ -53,27 +53,61 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Auth to Heroku (netrc)
+      # --- Heroku deploy (HTTPS + .netrc) -----------------------------------------
+      # Requires repo/org secrets:
+      #   HEROKU_EMAIL       -> your Heroku account email
+      #   HEROKU_API_KEY     -> your Heroku API token (NOT your account password)
+      # Adjust HEROKU_APP and HEROKU_BRANCH if needed.
+
+      - name: Prepare env
         run: |
-          cat > ~/.netrc <<EOF
+          echo "Using branch: ${HEROKU_BRANCH:-main}"
+        env:
+          HEROKU_BRANCH: main         # change to 'master' if your Heroku app expects it
+
+      - name: Authenticate to Heroku via ~/.netrc
+        # Write .netrc in $HOME and lock permissions to 600.
+        # Git/cURL will automatically use this for https://git.heroku.com
+        run: |
+          set -euo pipefail
+          : "${HEROKU_EMAIL:?Missing HEROKU_EMAIL}"
+          : "${HEROKU_API_KEY:?Missing HEROKU_API_KEY}"
+          cat > "$HOME/.netrc" <<EOF
           machine api.heroku.com
-          login $HEROKU_EMAIL
-          password $HEROKU_API_KEY
+            login $HEROKU_EMAIL
+            password $HEROKU_API_KEY
           machine git.heroku.com
-          login $HEROKU_EMAIL
-          password $HEROKU_API_KEY
+            login $HEROKU_EMAIL
+            password $HEROKU_API_KEY
           EOF
-          chmod 600 ~/.netrc
+          chmod 600 "$HOME/.netrc"
+        env:
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Verify ~/.netrc exists (sanitized)
+        # Don't print secrets; just confirm the 'machine' lines are present
+        run: |
+          set -euo pipefail
+          echo "HOME=$HOME"
+          ls -l "$HOME/.netrc"
+          grep -E "^machine (api|git)\.heroku\.com$" "$HOME/.netrc"
 
       - name: Setup Git remote
+        # Use a clean URL (no credentials in URL). Let .netrc carry auth.
         run: |
-            git remote remove heroku || true
-            git remote add heroku https://git.heroku.com/udacity-c3-model.git
-            git remote -v
+          set -euo pipefail
+          git config --global --unset-all http.https://git.heroku.com/.extraheader || true
+          git remote remove heroku || true
+          git remote add heroku https://git.heroku.com/udacity-c3-model.git
+          git remote -v
+
+      - name: Sanity check connectivity (fails fast if auth is wrong)
+        run: |
+          set -euo pipefail
+          git ls-remote heroku >/dev/null
 
       - name: Deploy to Heroku
         run: |
-            # sanity check — failar direkt om auth inte funkar
-            git ls-remote heroku >/dev/null
-            # pusha till branch på Heroku
-            git push heroku HEAD:main --force
+          set -euo pipefail
+          git push heroku HEAD:${HEROKU_BRANCH} --force
