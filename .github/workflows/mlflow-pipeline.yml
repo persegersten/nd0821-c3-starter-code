@@ -8,42 +8,31 @@ on:
 
 jobs:
   build-and-train:
+    # Your build-and-train job stays exactly the same
     runs-on: ubuntu-latest
-
     defaults:
       run:
-        shell: bash -l {0}          # run in a login shell so conda activate works
-
+        shell: bash -l {0}
     steps:
-    # 1. Checkout repository
     - uses: actions/checkout@v4
-
-    # 2. Cache Conda pkgs to speed up subsequent builds (optional but nice)
     - name: Cache conda
       uses: actions/cache@v4
       with:
         path: ~/.conda/pkgs
         key: conda-pkgs-${{ runner.os }}-${{ hashFiles('conda.yml') }}
-
-    # 3. Install Miniconda & create env from conda.yml
     - name: Set up Miniconda
       uses: conda-incubator/setup-miniconda@v3
       with:
         environment-file: conda.yml
         activate-environment: mlflow-env
         auto-activate-base: false
-        use-only-tar-bz2: true      # faster installs, works with the cache
-
-    # 4. Run the exact pipeline you run locally
+        use-only-tar-bz2: true
     - name: Run MLflow project
       run: |
         mlflow --version
-        mlflow run .                
-
+        mlflow run .
     - name: Debug – lista modeller
       run: ls -R model
-
-    # 5. Upload the trained model & encoder so you can download them from the job
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
@@ -54,36 +43,46 @@ jobs:
           **/onehot_encoder.joblib
         if-no-files-found: error
 
-  # 6 Deploy on Heroku
   deploy-heroku:
     needs: build-and-train
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Important for Heroku deployment
 
-      - uses: actions/download-artifact@v4
+      - name: Download model artifacts
+        uses: actions/download-artifact@v4
         with:
           name: model
           path: model
 
-      # Add a debug step to verify the files
       - name: Debug - Check downloaded files
         run: |
           echo "Contents of model directory:"
-          ls -la model/
-          
-          echo "Contents of . directory:"
-          ls -la ./
+          ls -la model/          
 
-      # Install Heroku CLI
-      - name: Install Heroku CLI
+      - name: Set up Git for Heroku
         run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global init.defaultBranch main
 
-      - name: Deploy to Heroku
+      # Add and commit the model files
+      - name: Add model files to git
+        run: |
+          git add .
+          git commit -m "Add model files for deployment" || echo "No changes to commit"
+
+      - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "udacity-c3-model"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: ""  # Specify the directory containing your app
+          justlogin: true
+
+      - name: Deploy to Heroku
+        run: |
+          heroku git:remote -a udacity-c3-model
+          git push heroku HEAD:main --force
