@@ -51,9 +51,8 @@ jobs:
           fetch-depth: 0
 
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+        uses: justinharringa/heroku-deploy@v3.0.2
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "udacity-c3-model"
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          buildpack: "heroku/python"
