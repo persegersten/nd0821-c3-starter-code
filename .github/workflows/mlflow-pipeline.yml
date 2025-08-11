@@ -45,25 +45,35 @@ jobs:
   deploy-heroku:
     needs: build-and-train
     runs-on: ubuntu-latest
+    env:
+      HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install Heroku CLI
+      - name: Auth to Heroku (netrc)
         run: |
-          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-          heroku --version
+          cat > ~/.netrc <<EOF
+          machine api.heroku.com
+          login $HEROKU_EMAIL
+          password $HEROKU_API_KEY
+          machine git.heroku.com
+          login $HEROKU_EMAIL
+          password $HEROKU_API_KEY
+          EOF
+          chmod 600 ~/.netrc
+
+      - name: Setup Git remote
+        run: |
+            git remote remove heroku || true
+            git remote add heroku https://git.heroku.com/udacity-c3-model.git
+            git remote -v
 
       - name: Deploy to Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-        run: |            
-          # Setup Git remote
-          git remote remove heroku || true
-          git remote add heroku https://heroku:${HEROKU_API_KEY}@git.heroku.com/udacity-c3-model.git
-            
-          # Verify remote and push
-          git remote -v
-          git push heroku HEAD:main --force
+        run: |
+            # sanity check — failar direkt om auth inte funkar
+            git ls-remote heroku >/dev/null
+            # pusha till branch på Heroku
+            git push heroku HEAD:main --force
