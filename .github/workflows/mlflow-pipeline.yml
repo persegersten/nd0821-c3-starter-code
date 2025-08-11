@@ -55,17 +55,26 @@ jobs:
           curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
           heroku --version
 
-      - name: Setup Git for Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          git remote remove heroku || true
-          git remote add heroku https://git.heroku.com/udacity-c3-model.git
-          echo "machine git.heroku.com login _ password $HEROKU_API_KEY" > ~/.netrc
-          chmod 600 ~/.netrc
-
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
         run: |
+          # Skapa .netrc med både api.heroku.com och git.heroku.com
+          cat > ~/.netrc << EOF
+          machine api.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+          machine git.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+          EOF
+          chmod 600 ~/.netrc
+            
+          # Setup Git remote
+          git remote remove heroku || true
+          git remote add heroku https://git.heroku.com/udacity-c3-model.git
+            
+          # Verify remote and push
+          git remote -v
           git push heroku HEAD:main --force
