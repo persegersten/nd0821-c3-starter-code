@@ -48,6 +48,7 @@ jobs:
     env:
       HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_BRANCH: main
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,9 +62,7 @@ jobs:
 
       - name: Prepare env
         run: |
-          echo "Using branch: ${HEROKU_BRANCH:-main}"
-        env:
-          HEROKU_BRANCH: main         # change to 'master' if your Heroku app expects it
+          echo "Using branch: ${HEROKU_BRANCH}"
 
       - name: Authenticate to Heroku via ~/.netrc
         # Write .netrc in $HOME and lock permissions to 600.
@@ -110,4 +109,5 @@ jobs:
       - name: Deploy to Heroku
         run: |
           set -euo pipefail
-          git push heroku HEAD:${HEROKU_BRANCH} --force
+          echo "Deploying branch: $HEROKU_BRANCH"
+          git push heroku HEAD:$HEROKU_BRANCH --force
