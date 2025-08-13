@@ -1,70 +1,76 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Check if GITHUB_TOKEN is set
-if [ -z "$GITHUB_TOKEN" ]; then
-    echo "Error: GITHUB_TOKEN environment variable is not set!"
-    exit 1
-fi
+: "${GITHUB_TOKEN:?GITHUB_TOKEN not set}"
+: "${PORT:?PORT not set}"
+: "${GITHUB_OWNER:?Set GITHUB_OWNER in Heroku Config Vars}"
+: "${GITHUB_REPO:?Set GITHUB_REPO in Heroku Config Vars}"
+: "${ARTIFACT_NAME:=model}"   # default 'model' om inte satt
 
-if [ -z "$PORT" ]; then
-    echo "Error: PORT environment variable is not set!"
-    exit 1
-fi
-
-# Create model directory if it doesn't exist
 mkdir -p model
 
-# Download and unzip model files if they don't exist
-if [ ! -f "model/random_forest_model.joblib" ] || [ ! -f "model/onehot_encoder.joblib" ]; then
-    echo "Downloading and extracting model files..."
+echo "Downloading artifact '${ARTIFACT_NAME}' from ${GITHUB_OWNER}/${GITHUB_REPO} ..."
 
-    # Create a temporary directory for the download
-    mkdir -p tmp_download
+python - <<'PY'
+import os, sys, json, io, zipfile, urllib.request
 
-    # Download the artifact using GitHub token
-    echo "Downloading model artifact..."
-    curl -L -H "Authorization: token $GITHUB_TOKEN" \
-         -o "tmp_download/model.zip" \
-         "https://api.github.com/repos/persegersten/udacity-project3/actions/artifacts/latest/zip"
+owner = os.environ["GITHUB_OWNER"]
+repo  = os.environ["GITHUB_REPO"]
+name  = os.environ.get("ARTIFACT_NAME","model")
+tok   = os.environ["GITHUB_TOKEN"]
 
-    # Check if download was successful
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to download model artifact!"
-        rm -rf tmp_download
-        exit 1
-    fi
+def req(url, accept=None):
+    r = urllib.request.Request(url)
+    r.add_header("Authorization", f"Bearer {tok}")
+    r.add_header("X-GitHub-Api-Version", "2022-11-28")
+    if accept:
+        r.add_header("Accept", accept)
+    return urllib.request.urlopen(r)
 
-    # Unzip the files to the model directory
-    echo "Extracting model files..."
-    unzip -o "tmp_download/model.zip" -d model/
+# 1) list artifacts
+with req(f"https://api.github.com/repos/{owner}/{repo}/actions/artifacts?per_page=100",
+         "application/vnd.github+json") as resp:
+    data = json.load(resp)
 
-    # Check if unzip was successful
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to extract model files!"
-        rm -rf tmp_download
-        exit 1
-    fi
+arts = [a for a in data.get("artifacts", []) if a.get("name") == name and not a.get("expired")]
+if not arts:
+    print(f"No non-expired artifact named '{name}' found in {owner}/{repo}", file=sys.stderr)
+    sys.exit(2)
 
-    # Clean up
-    rm -rf tmp_download
+aid = sorted(arts, key=lambda a: a["created_at"], reverse=True)[0]["id"]
 
-    # Debug: List contents of model directory
-    echo "Contents of model directory:"
-    ls -la model/
-fi
+# 2) download zip (GitHub returns a 302 to a signed URL; urllib follows it)
+with req(f"https://api.github.com/repos/{owner}/{repo}/actions/artifacts/{aid}/zip") as resp:
+    zbytes = resp.read()
 
-# Check if model files exist after download/extraction
-if [ ! -f "model/random_forest_model.joblib" ] || [ ! -f "model/onehot_encoder.joblib" ]; then
-    echo "Error: Model files are missing after download and extraction!"
-    echo "Expected files:"
-    echo "- model/random_forest_model.joblib"
-    echo "- model/onehot_encoder.joblib"
-    exit 1
-fi
+# 3) validate & extract exactly the files we expect
+try:
+    zf = zipfile.ZipFile(io.BytesIO(zbytes))
+except zipfile.BadZipFile:
+    print("Downloaded file is not a zip. First 400 bytes:", zbytes[:400], file=sys.stderr)
+    sys.exit(3)
 
-echo "Model files are ready!"
+wanted = {"random_forest_model.joblib", "onehot_encoder.joblib"}
+extracted = set()
+import os as _os
+_os.makedirs("model", exist_ok=True)
 
-export MODEL_DIR="model"
+for m in zf.infolist():
+    base = _os.path.basename(m.filename)
+    if base in wanted:
+        with zf.open(m) as src, open(_os.path.join("model", base), "wb") as dst:
+            dst.write(src.read())
+        extracted.add(base)
 
-# Start the application
-exec gunicorn components.api.app:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+missing = wanted - extracted
+if missing:
+    print("Missing expected files in artifact:", ", ".join(sorted(missing)), file=sys.stderr)
+    sys.exit(4)
+
+print("Artifact downloaded and extracted.")
+PY
+
+ls -la model
+
+# Start the app (justera workers om du vill)
+exec gunicorn components.api.app:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
