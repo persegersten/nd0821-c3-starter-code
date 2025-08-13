@@ -5,6 +5,8 @@ set -euo pipefail
 : "${GITHUB_OWNER:?Set GITHUB_OWNER in Heroku Config Vars}"
 : "${GITHUB_REPO:?Set GITHUB_REPO in Heroku Config Vars}"
 : "${PORT:?PORT not set}"
+: "${WEB_CONCURRENCY:?WEB_CONCURRENCY not set}"
+: "${MALLOC_ARENA_MAX:?MALLOC_ARENA_MAX not set}"
 ARTIFACT_NAME="${ARTIFACT_NAME:-model}"
 
 mkdir -p model /tmp/artifact
@@ -57,6 +59,7 @@ echo "Artifact downloaded and extracted."
 
 # 6) Starta appen (bind till Herokus PORT)
 exec gunicorn components.api.app:app \
-  --workers 2 \
+  --workers "${WEB_CONCURRENCY}" \
+  --max-requests 200 --max-requests-jitter 50 \
   --worker-class uvicorn.workers.UvicornWorker \
   --bind 0.0.0.0:$PORT
