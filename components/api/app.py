@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 import pandas as pd
 import joblib
 from typing import Any, Dict
-import numpy as np
 import os
 from pathlib import Path
 
@@ -31,13 +30,14 @@ NUMERIC_COLS = [
 # Folder that holds the artefacts.
 # Set MODEL_DIR=/some/absolute/or/relative/dir in your environment to override
 MODEL_DIR = Path(os.getenv("MODEL_DIR", "./model"))
-model   = joblib.load(MODEL_DIR / "random_forest_model.joblib")
+model = joblib.load(MODEL_DIR / "random_forest_model.joblib")
 encoder = joblib.load(MODEL_DIR / "onehot_encoder.joblib")
 # lb = joblib.load("../model/label_binarizer.joblib")
 
 # Start app
 # uvicorn components.api.app:app --reload --host 0.0.0.0 --port 8000
 app = FastAPI()
+
 
 class InferenceRequest(BaseModel):
     age: int
@@ -72,11 +72,14 @@ class InferenceRequest(BaseModel):
             }
         }
 
+
 @app.get("/")
 def read_root() -> Dict[str, Any]:
     return {"message": "Welcome to the Income Prediction API"}
 
+
 LABEL_MAP = {0: "<=50K", 1: ">50K"}
+
 
 @app.post("/predict")
 def predict_income(payload: dict):

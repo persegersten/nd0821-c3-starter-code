@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
+
 
 def process_data(
     X, categorical_features=[], label=None, training=True, encoder=None, lb=None

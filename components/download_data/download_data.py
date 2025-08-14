@@ -61,7 +61,7 @@ def main(dataset_id: int, target_dir: str):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Download UCI Census Income dataset and log to MLflow.")
+    parser = argparse.ArgumentParser(description="Download UCI Census Income dataset")
     parser.add_argument("--dataset_id", type=int, required=True, help="UCI dataset ID (e.g., 20)")
     parser.add_argument("--target_dir", type=str, required=True, help="Directory to save CSV")
     args = parser.parse_args()

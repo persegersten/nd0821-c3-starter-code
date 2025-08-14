@@ -7,22 +7,23 @@ Three tests:
 We patch the module’s `encoder` and `model`, not the FastAPI instance.
 """
 from pathlib import Path
-import sys, importlib
+import sys
+import importlib
 import numpy as np
-import pytest
 from fastapi.testclient import TestClient
+import joblib
 
 # --- Make sure the project root is on sys.path -----------------------------
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 # --- Block heavy / local loading before we import app.py -------------------
-import joblib
 joblib.load = lambda *args, **kw: None   # always returns None
 
 # Import the whole module – we get both the app instance and its globals
 app_module = importlib.import_module("app")
 client = TestClient(app_module.app)
+
 
 # ---- Dummy helpers --------------------------------------------------------
 class DummyEncoder:
@@ -36,13 +37,13 @@ class DummyEncoder:
             input_features = range(self._n_out)
         return [f"{col}_dummy" for col in input_features]
 
+
 class DummyModel:
     def __init__(self, out):
         self._out = np.asarray(out)
 
     def predict(self, X):
         return self._out
-
 
 
 # ---- Common, valid payload ------------------------------------------------
@@ -63,11 +64,13 @@ VALID_PAYLOAD = {
     "workclass": "Private",
 }
 
+
 # ---- The actual tests -----------------------------------------------------
 def test_read_root():
     r = client.get("/")
     assert r.status_code == 200
     assert r.json() == {"message": "Welcome to the Income Prediction API"}
+
 
 def test_predict_low_income(monkeypatch):
     monkeypatch.setattr(app_module, "encoder", DummyEncoder(), raising=False)
@@ -76,6 +79,7 @@ def test_predict_low_income(monkeypatch):
     r = client.post("/predict", json=VALID_PAYLOAD)
     assert r.status_code == 200
     assert r.json() == {"prediction": ["<=50K"]}
+
 
 def test_predict_high_income(monkeypatch):
     monkeypatch.setattr(app_module, "encoder", DummyEncoder(), raising=False)

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from typing import List, Dict, Any
 
+
 # Optional: implement hyperparameter tuning.
 def train_model(X_train, y_train):
     """
@@ -68,6 +69,7 @@ def inference(model, X):
     """
     preds = model.predict(X)
     return preds
+
 
 def evaluate_slices(
     model,

@@ -64,5 +64,3 @@ def test_inference_uses_model_predict():
     assert isinstance(preds, np.ndarray)
     assert preds.shape == (3,)
     assert all(preds == 42)
-
-

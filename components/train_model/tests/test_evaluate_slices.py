@@ -5,6 +5,7 @@ import numpy as np
 import ml.model as model
 from ml.model import evaluate_slices
 
+
 def test_evaluate_slices_with_stubbed_functions(monkeypatch):
     """
     Verify that evaluate_slices loops over each category/value,
@@ -37,15 +38,16 @@ def test_evaluate_slices_with_stubbed_functions(monkeypatch):
 
     # All metric columns should equal our stubbed values
     assert (df['precision'] == 0.1).all()
-    assert (df['recall']    == 0.2).all()
-    assert (df['fbeta']     == 0.3).all()
+    assert (df['recall'] == 0.2).all()
+    assert (df['fbeta'] == 0.3).all()
 
     # Check that 'n' matches the counts per category
     counts = dict(zip(df['value'], df['n']))
     assert counts['v1'] == 2
     assert counts['v2'] == 1
-    assert counts['a']  == 2
-    assert counts['b']  == 1
+    assert counts['a'] == 2
+    assert counts['b'] == 1
+
 
 def test_evaluate_slices_with_perfect_model():
     """
@@ -69,9 +71,9 @@ def test_evaluate_slices_with_perfect_model():
     assert set(df['value']) == {'x', 'y'}
 
     for val in ['x', 'y']:
-        rec = df[(df.feature=='cat') & (df.value==val)].iloc[0]
+        rec = df[(df.feature == 'cat') & (df.value == val)].iloc[0]
         assert rec.precision == 1.0
-        assert rec.recall    == 1.0
-        assert rec.fbeta     == 1.0
+        assert rec.recall == 1.0
+        assert rec.fbeta == 1.0
         # each value appears twice
         assert rec.n == 2

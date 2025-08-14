@@ -23,12 +23,15 @@ import requests
 
 API_BASE_URL: str = os.getenv("API_BASE_URL", "http://localhost:8000")
 
+
 # -------- helper ------------------------------------------------------------
 def _get(path: str = "/"):
     return requests.get(f"{API_BASE_URL}{path}", timeout=5)
 
+
 def _post(path: str, payload: dict):
     return requests.post(f"{API_BASE_URL}{path}", json=payload, timeout=10)
+
 
 # -------- canonical payloads -----------------------------------------------
 LOW_PAYLOAD: dict = {

@@ -102,7 +102,6 @@ if __name__ == "__main__":
             logger.info(f"Analyse feature slices on categorical feature: {category}")
             f.write(f"\n=== Feature slice: {category} ===\n")
 
-            #X_test_df = pd.DataFrame(X_test, columns=ohe_feature_names)
             slice_df = evaluate_slices(model, X_test, y_test, encoded_cols)
             f.write(slice_df.to_string(index=False))
             f.write("\n")
@@ -110,4 +109,3 @@ if __name__ == "__main__":
     logger.info(f"Report of categorical feature saved to: {args.sliced_output_path}")
 
     mlflow.end_run()
-
