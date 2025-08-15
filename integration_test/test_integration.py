@@ -12,6 +12,7 @@ Configuration
 -------------
 Change the base URL in `API_BASE_URL`, or override it at runtime:
 
+    cd integration_test/
     API_BASE_URL="https://udacity-c3-model-28ffc738d748.herokuapp.com/" pytest -q
 
 NB: The service **must already be up** before you run these tests.
