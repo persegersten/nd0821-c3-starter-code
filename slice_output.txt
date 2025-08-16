@@ -1,0 +1,232 @@
+
+=== Feature slice: workclass ===
+                   feature  value  precision   recall    fbeta    n
+               workclass_?    0.0   0.734342 0.608564 0.665563 9383
+               workclass_?    1.0   0.575000 0.534884 0.554217  386
+     workclass_Federal-gov    0.0   0.728013 0.598661 0.657031 9469
+     workclass_Federal-gov    1.0   0.780702 0.773913 0.777293  300
+       workclass_Local-gov    0.0   0.727273 0.602866 0.659252 9142
+       workclass_Local-gov    1.0   0.773006 0.656250 0.709859  627
+    workclass_Never-worked    0.0   0.731084 0.607219 0.663419 9768
+    workclass_Never-worked    1.0   1.000000 1.000000 1.000000    1
+         workclass_Private    1.0   0.715088 0.607776 0.657080 6729
+         workclass_Private    0.0   0.759155 0.606299 0.674171 3040
+    workclass_Self-emp-inc    0.0   0.723794 0.596708 0.654135 9452
+    workclass_Self-emp-inc    1.0   0.816993 0.744048 0.778816  317
+workclass_Self-emp-not-inc    0.0   0.728075 0.629471 0.675192 8941
+workclass_Self-emp-not-inc    1.0   0.769231 0.426357 0.548628  828
+       workclass_State-gov    0.0   0.732869 0.607365 0.664241 9383
+       workclass_State-gov    1.0   0.693182 0.603960 0.645503  386
+     workclass_Without-pay    0.0   0.731084 0.607219 0.663419 9765
+     workclass_Without-pay    1.0   1.000000 1.000000 1.000000    4
+             workclass_nan    0.0   0.731895 0.608195 0.664336 9578
+             workclass_nan    1.0   0.555556 0.416667 0.476190  191
+
+=== Feature slice: education ===
+               feature  value  precision   recall    fbeta    n
+        education_10th    0.0   0.730769 0.608974 0.664336 9536
+        education_10th    1.0   0.833333 0.333333 0.476190  233
+        education_11th    0.0   0.730809 0.611040 0.665579 9397
+        education_11th    1.0   1.000000 0.111111 0.200000  372
+        education_12th    0.0   0.730907 0.608102 0.663873 9639
+        education_12th    1.0   0.800000 0.400000 0.533333  130
+     education_1st-4th    0.0   0.731084 0.607477 0.663573 9711
+     education_1st-4th    1.0   1.000000 0.000000 0.000000   58
+     education_5th-6th    0.0   0.730809 0.607401 0.663415 9666
+     education_5th-6th    1.0   1.000000 0.500000 0.666667  103
+     education_7th-8th    0.0   0.730907 0.607843 0.663719 9553
+     education_7th-8th    1.0   0.800000 0.444444 0.571429  216
+         education_9th    0.0   0.731695 0.608603 0.664497 9622
+         education_9th    1.0   0.333333 0.142857 0.200000  147
+  education_Assoc-acdm    0.0   0.731849 0.605436 0.662668 9437
+  education_Assoc-acdm    1.0   0.710145 0.662162 0.685315  332
+   education_Assoc-voc    0.0   0.730218 0.612472 0.666182 9336
+   education_Assoc-voc    1.0   0.753425 0.500000 0.601093  433
+   education_Bachelors    0.0   0.713090 0.555753 0.624667 8165
+   education_Bachelors    1.0   0.767913 0.736921 0.752098 1604
+   education_Doctorate    0.0   0.728004 0.597797 0.656507 9648
+   education_Doctorate    1.0   0.793478 0.858824 0.824859  121
+     education_HS-grad    1.0   0.580060 0.389452 0.466019 3123
+     education_HS-grad    0.0   0.761846 0.664876 0.710066 6646
+     education_Masters    0.0   0.722689 0.580801 0.644022 9256
+     education_Masters    1.0   0.779310 0.801418 0.790210  513
+   education_Preschool    0.0   0.731458 0.607219 0.663573 9750
+   education_Preschool    1.0   0.000000 1.000000 0.000000   19
+ education_Prof-school    0.0   0.720637 0.590112 0.648876 9587
+ education_Prof-school    1.0   0.873134 0.900000 0.886364  182
+education_Some-college    0.0   0.738973 0.641321 0.686693 7586
+education_Some-college    1.0   0.687708 0.462054 0.552737 2183
+
+=== Feature slice: marital-status ===
+                             feature  value  precision   recall    fbeta    n
+             marital-status_Divorced    0.0   0.730403 0.625113 0.673669 8433
+             marital-status_Divorced    1.0   0.750000 0.342282 0.470046 1336
+    marital-status_Married-AF-spouse    0.0   0.731084 0.607477 0.663573 9761
+    marital-status_Married-AF-spouse    1.0   1.000000 0.000000 0.000000    8
+   marital-status_Married-civ-spouse    0.0   0.815642 0.376289 0.514991 5299
+   marital-status_Married-civ-spouse    1.0   0.722566 0.652771 0.685897 4470
+marital-status_Married-spouse-absent    0.0   0.730631 0.608807 0.664179 9628
+marital-status_Married-spouse-absent    1.0   0.857143 0.375000 0.521739  141
+        marital-status_Never-married    1.0   0.884058 0.374233 0.525862 3203
+        marital-status_Never-married    0.0   0.725490 0.624544 0.671243 6566
+            marital-status_Separated    0.0   0.730650 0.608770 0.664165 9488
+            marital-status_Separated    1.0   0.777778 0.482759 0.595745  281
+              marital-status_Widowed    0.0   0.730273 0.609032 0.664165 9439
+              marital-status_Widowed    1.0   0.823529 0.466667 0.595745  330
+
+=== Feature slice: occupation ===
+                     feature  value  precision   recall    fbeta    n
+                occupation_?    0.0   0.734342 0.608564 0.665563 9383
+                occupation_?    1.0   0.575000 0.534884 0.554217  386
+     occupation_Adm-clerical    0.0   0.734728 0.610984 0.667166 8639
+     occupation_Adm-clerical    1.0   0.683453 0.558824 0.614887 1130
+     occupation_Armed-Forces    0.0   0.730946 0.607310 0.663417 9766
+     occupation_Armed-Forces    1.0   1.000000 0.500000 0.666667    3
+     occupation_Craft-repair    0.0   0.749006 0.639360 0.689854 8490
+     occupation_Craft-repair    1.0   0.569231 0.380137 0.455852 1279
+  occupation_Exec-managerial    0.0   0.709793 0.561334 0.626894 8536
+  occupation_Exec-managerial    1.0   0.784560 0.745734 0.764654 1233
+  occupation_Farming-fishing    0.0   0.730928 0.611998 0.666197 9460
+  occupation_Farming-fishing    1.0   0.750000 0.315789 0.444444  309
+occupation_Handlers-cleaners    0.0   0.731996 0.610206 0.665575 9380
+occupation_Handlers-cleaners    1.0   0.583333 0.304348 0.400000  389
+occupation_Machine-op-inspct    0.0   0.733998 0.613866 0.668578 9164
+occupation_Machine-op-inspct    1.0   0.620000 0.407895 0.492063  605
+    occupation_Other-service    1.0   0.800000 0.216216 0.340426 1007
+    occupation_Other-service    0.0   0.730730 0.613460 0.666979 8762
+  occupation_Priv-house-serv    0.0   0.731084 0.607477 0.663573 9714
+  occupation_Priv-house-serv    1.0   1.000000 0.000000 0.000000   55
+   occupation_Prof-specialty    0.0   0.705679 0.567056 0.628818 8582
+   occupation_Prof-specialty    1.0   0.802734 0.736559 0.768224 1187
+  occupation_Protective-serv    0.0   0.732736 0.607517 0.664277 9563
+  occupation_Protective-serv    1.0   0.677966 0.597015 0.634921  206
+            occupation_Sales    0.0   0.734155 0.609056 0.665780 8675
+            occupation_Sales    1.0   0.710317 0.594684 0.647378 1094
+     occupation_Tech-support    0.0   0.731075 0.606500 0.662986 9496
+     occupation_Tech-support    1.0   0.731343 0.628205 0.675862  273
+ occupation_Transport-moving    0.0   0.734237 0.616900 0.670473 9348
+ occupation_Transport-moving    1.0   0.567568 0.295775 0.388889  421
+              occupation_nan    0.0   0.731895 0.608195 0.664336 9577
+              occupation_nan    1.0   0.555556 0.416667 0.476190  192
+
+=== Feature slice: relationship ===
+                    feature  value  precision   recall    fbeta    n
+       relationship_Husband    0.0   0.775676 0.479132 0.592363 5801
+       relationship_Husband    1.0   0.720681 0.650911 0.684022 3968
+ relationship_Not-in-family    1.0   0.818182 0.396610 0.534247 2516
+ relationship_Not-in-family    0.0   0.724214 0.637379 0.678027 7253
+relationship_Other-relative    0.0   0.730907 0.608362 0.664028 9443
+relationship_Other-relative    1.0   0.800000 0.363636 0.500000  326
+     relationship_Own-child    0.0   0.730256 0.609850 0.664644 8310
+     relationship_Own-child    1.0   1.000000 0.300000 0.461538 1459
+     relationship_Unmarried    0.0   0.730669 0.616193 0.668566 8703
+     relationship_Unmarried    1.0   0.758621 0.314286 0.444444 1066
+          relationship_Wife    0.0   0.730356 0.600372 0.659016 9335
+          relationship_Wife    1.0   0.737968 0.679803 0.707692  434
+
+=== Feature slice: race ===
+                feature  value  precision   recall    fbeta    n
+race_Amer-Indian-Eskimo    0.0   0.732170 0.608010 0.664339 9673
+race_Amer-Indian-Eskimo    1.0   0.428571 0.375000 0.400000   96
+race_Asian-Pac-Islander    0.0   0.730851 0.605553 0.662328 9451
+race_Asian-Pac-Islander    1.0   0.736842 0.651163 0.691358  318
+             race_Black    0.0   0.731447 0.613250 0.667154 8818
+             race_Black    1.0   0.722892 0.495868 0.588235  951
+             race_Other    0.0   0.730395 0.607158 0.663099 9702
+             race_Other    1.0   1.000000 0.625000 0.769231   67
+             race_White    1.0   0.731653 0.612570 0.666837 8337
+             race_White    0.0   0.725146 0.556054 0.629442 1432
+
+=== Feature slice: sex ===
+   feature  value  precision   recall    fbeta    n
+sex_Female    0.0   0.726044 0.620603 0.669195 6536
+sex_Female    1.0   0.764706 0.534247 0.629032 3233
+  sex_Male    1.0   0.726044 0.620603 0.669195 6536
+  sex_Male    0.0   0.764706 0.534247 0.629032 3233
+
+=== Feature slice: native-country ===
+                                  feature  value  precision   recall    fbeta    n
+                         native-country_?    0.0   0.731027 0.607725 0.663698 9651
+                         native-country_?    1.0   0.736842 0.560000 0.636364  118
+                  native-country_Cambodia    0.0   0.730946 0.607826 0.663725 9760
+                  native-country_Cambodia    1.0   1.000000 0.250000 0.400000    9
+                    native-country_Canada    0.0   0.729702 0.607357 0.662932 9738
+                    native-country_Canada    1.0   1.000000 0.588235 0.740741   31
+                     native-country_China    0.0   0.730769 0.607158 0.663253 9743
+                     native-country_China    1.0   0.833333 0.625000 0.714286   26
+                  native-country_Columbia    0.0   0.730671 0.606718 0.662950 9748
+                  native-country_Columbia    1.0   1.000000 1.000000 1.000000   21
+                      native-country_Cuba    0.0   0.730077 0.605544 0.662005 9741
+                      native-country_Cuba    1.0   0.909091 1.000000 0.952381   28
+        native-country_Dominican-Republic    0.0   0.730946 0.607052 0.663263 9748
+        native-country_Dominican-Republic    1.0   1.000000 1.000000 1.000000   21
+                   native-country_Ecuador    0.0   0.730946 0.607052 0.663263 9761
+                   native-country_Ecuador    1.0   1.000000 1.000000 1.000000    8
+               native-country_El-Salvador    0.0   0.730946 0.607052 0.663263 9733
+               native-country_El-Salvador    1.0   1.000000 1.000000 1.000000   36
+                   native-country_England    0.0   0.731520 0.607935 0.664026 9733
+                   native-country_England    1.0   0.625000 0.454545 0.526316   36
+                    native-country_France    0.0   0.730395 0.606899 0.662945 9758
+                    native-country_France    1.0   1.000000 0.714286 0.833333   11
+                   native-country_Germany    0.0   0.730730 0.606655 0.662937 9727
+                   native-country_Germany    1.0   0.800000 0.727273 0.761905   42
+                    native-country_Greece    0.0   0.730946 0.607310 0.663417 9762
+                    native-country_Greece    1.0   1.000000 0.500000 0.666667    7
+                 native-country_Guatemala    0.0   0.731084 0.607219 0.663419 9753
+                 native-country_Guatemala    1.0   1.000000 1.000000 1.000000   16
+                     native-country_Haiti    0.0   0.730809 0.607143 0.663261 9747
+                     native-country_Haiti    1.0   1.000000 0.666667 0.800000   22
+                  native-country_Honduras    0.0   0.731084 0.607219 0.663419 9763
+                  native-country_Honduras    1.0   1.000000 1.000000 1.000000    6
+                      native-country_Hong    0.0   0.731183 0.606885 0.663261 9762
+                      native-country_Hong    1.0   0.666667 1.000000 0.800000    7
+                   native-country_Hungary    0.0   0.731084 0.607477 0.663573 9766
+                   native-country_Hungary    1.0   1.000000 0.000000 0.000000    3
+                     native-country_India    0.0   0.732510 0.607249 0.664024 9737
+                     native-country_India    1.0   0.500000 0.600000 0.545455   32
+                      native-country_Iran    0.0   0.731183 0.607401 0.663569 9760
+                      native-country_Iran    1.0   0.666667 0.500000 0.571429    9
+                   native-country_Ireland    0.0   0.730946 0.607052 0.663263 9766
+                   native-country_Ireland    1.0   1.000000 1.000000 1.000000    3
+                     native-country_Italy    0.0   0.730907 0.607067 0.663256 9752
+                     native-country_Italy    1.0   0.800000 0.666667 0.727273   17
+                   native-country_Jamaica    0.0   0.730946 0.607826 0.663725 9744
+                   native-country_Jamaica    1.0   1.000000 0.250000 0.400000   25
+                     native-country_Japan    0.0   0.730354 0.606397 0.662628 9745
+                     native-country_Japan    1.0   0.888889 0.800000 0.842105   24
+                      native-country_Laos    0.0   0.731084 0.607477 0.663573 9763
+                      native-country_Laos    1.0   1.000000 0.000000 0.000000    6
+                    native-country_Mexico    0.0   0.731045 0.608269 0.664030 9560
+                    native-country_Mexico    1.0   0.750000 0.333333 0.461538  209
+                 native-country_Nicaragua    0.0   0.731084 0.607219 0.663419 9762
+                 native-country_Nicaragua    1.0   1.000000 1.000000 1.000000    7
+native-country_Outlying-US(Guam-USVI-etc)    0.0   0.731084 0.607219 0.663419 9766
+native-country_Outlying-US(Guam-USVI-etc)    1.0   1.000000 1.000000 1.000000    3
+                      native-country_Peru    0.0   0.731458 0.607477 0.663727 9761
+                      native-country_Peru    1.0   0.000000 0.000000 0.000000    8
+               native-country_Philippines    0.0   0.731720 0.607265 0.663709 9709
+               native-country_Philippines    1.0   0.642857 0.600000 0.620690   60
+                    native-country_Poland    0.0   0.731695 0.607826 0.664033 9752
+                    native-country_Poland    1.0   0.333333 0.250000 0.285714   17
+                  native-country_Portugal    0.0   0.731084 0.607993 0.663881 9751
+                  native-country_Portugal    1.0   1.000000 0.000000 0.000000   18
+               native-country_Puerto-Rico    0.0   0.730533 0.606550 0.662793 9737
+               native-country_Puerto-Rico    1.0   1.000000 1.000000 1.000000   32
+                  native-country_Scotland    0.0   0.730946 0.607052 0.663263 9764
+                  native-country_Scotland    1.0   1.000000 1.000000 1.000000    5
+                     native-country_South    0.0   0.731183 0.607143 0.663415 9746
+                     native-country_South    1.0   0.666667 0.666667 0.666667   23
+                    native-country_Taiwan    0.0   0.730354 0.605880 0.662320 9753
+                    native-country_Taiwan    1.0   0.888889 1.000000 0.941176   16
+                  native-country_Thailand    0.0   0.731084 0.607219 0.663419 9765
+                  native-country_Thailand    1.0   1.000000 1.000000 1.000000    4
+           native-country_Trinadad&Tobago    0.0   0.731320 0.607052 0.663417 9764
+           native-country_Trinadad&Tobago    1.0   0.500000 1.000000 0.666667    5
+             native-country_United-States    1.0   0.726404 0.605337 0.660368 8709
+             native-country_United-States    0.0   0.778409 0.625571 0.693671 1060
+                   native-country_Vietnam    0.0   0.730946 0.607310 0.663417 9745
+                   native-country_Vietnam    1.0   1.000000 0.500000 0.666667   24
+                native-country_Yugoslavia    0.0   0.731320 0.607052 0.663417 9767
+                native-country_Yugoslavia    1.0   0.500000 1.000000 0.666667    2
+                       native-country_nan    0.0   0.730511 0.607036 0.663074 9707
+                       native-country_nan    1.0   0.789474 0.625000 0.697674   62
