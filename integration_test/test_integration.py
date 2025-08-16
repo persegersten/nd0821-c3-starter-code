@@ -40,6 +40,7 @@ def _post(path: str, payload: dict):
     print_response(response, "POST", url)
     return response
 
+
 def print_response(response: requests.Response, method: str, url: str):
     try:
         body_str = json.dumps(response.json(), ensure_ascii=False)
@@ -51,6 +52,7 @@ def print_response(response: requests.Response, method: str, url: str):
     print(f"URL:         {url}")
     print(f"Status code: {response.status_code}")
     print(f"Response:    {body_str}")
+
 
 # -------- canonical payloads -----------------------------------------------
 LOW_PAYLOAD: dict = {
