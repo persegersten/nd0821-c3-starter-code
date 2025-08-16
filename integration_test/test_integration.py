@@ -19,6 +19,7 @@ NB: The service **must already be up** before you run these tests.
 """
 from __future__ import annotations
 
+import json
 import os
 import requests
 
@@ -27,12 +28,29 @@ API_BASE_URL: str = os.getenv("API_BASE_URL", "http://localhost:8000")
 
 # -------- helper ------------------------------------------------------------
 def _get(path: str = "/"):
-    return requests.get(f"{API_BASE_URL}{path}", timeout=5)
+    url = f"{API_BASE_URL}{path}"
+    response = requests.get(url, timeout=5)
+    print_response(response, "GET", url)
+    return response
 
 
 def _post(path: str, payload: dict):
-    return requests.post(f"{API_BASE_URL}{path}", json=payload, timeout=10)
+    url = f"{API_BASE_URL}{path}"
+    response = requests.post(url, json=payload, timeout=10)
+    print_response(response, "POST", url)
+    return response
 
+def print_response(response: requests.Response, method: str, url: str):
+    try:
+        body_str = json.dumps(response.json(), ensure_ascii=False)
+    except ValueError:
+        body_str = response.text
+
+    print("")
+    print(f"Method:      {method}")
+    print(f"URL:         {url}")
+    print(f"Status code: {response.status_code}")
+    print(f"Response:    {body_str}")
 
 # -------- canonical payloads -----------------------------------------------
 LOW_PAYLOAD: dict = {
@@ -79,6 +97,7 @@ HIGH_PAYLOAD: dict = {
 # -------- tests -------------------------------------------------------------
 def test_read_root():
     r = _get("/")
+
     assert r.status_code == 200
     assert r.json() == {"message": "Welcome to the Income Prediction API"}
 
